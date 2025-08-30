@@ -120,12 +120,6 @@ let solveButton;
 let scInput;
 let scExe;
 
-let rubik1;
-let cam;
-let input1;
-let button1;
-let button2;
-
 function sketch1(p) {
     p.preload = function () {
         colordict = {
@@ -240,6 +234,14 @@ function sketch1(p) {
     };
 }
 
+let rubik1;
+let cam;
+let input1;
+let button1;
+let button2;
+let opButtons;
+let suffButtons;
+let sliceButtons;
 function sketch2(p) {
     p.setup = function () {
         let canvas = p.createCanvas(400, 400, p.WEBGL);
@@ -259,6 +261,40 @@ function sketch2(p) {
         button2 = p.createButton("export");
         button2.mousePressed(exportFaces);
         button2.position(460, p.height - 50);
+        let ops = ["U", "D", "R", "L", "F", "B", "M", "E", "S"];
+        opButtons = ops.map((v) => p.createButton(v));
+        opButtons.forEach((button, i) => {
+            button.id("btn" + ops[i]);
+            button.position(
+                520 + 40 * (i % 6),
+                p.height - 50 + Math.floor(i / 6) * 20
+            );
+            button.mousePressed(function () {
+                rubik1.startanimate(ops[i]);
+            });
+        });
+
+        let suffs = [ "'", "2","reset"];
+        suffButtons = suffs.map((v) => p.createButton(v));
+        suffButtons.forEach((button1, i) => {
+            let suff = suffs[i] != "reset" ? suffs[i] : "";
+            button1.position(520 + 40 * (i + 3), p.height - 30);
+            button1.mousePressed(function () {
+                let op = ops.map((op) => op + suff);
+                console.log(op);
+                // opButtons = ops.map((v) => p.createButton(v));
+                opButtons.forEach((button2, j) => {
+                    let elemButton = document.getElementById("btn" + ops[j]);
+                    elemButton.textContent = suffs[i] != "reset"
+                        ? op[j]
+                        : ops[j];
+                    // button.position(520 + 40 * i, p.height - 50);
+                    button2.mousePressed(function () {
+                        rubik1.startanimate(op[j]);
+                    });
+                });
+            });
+        });
     };
     p.draw = function () {
         p.background(155);
